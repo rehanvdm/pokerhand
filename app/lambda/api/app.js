@@ -26,7 +26,13 @@ module.exports.handler = async (event, context) =>
         htmlOutput += "<br> You hve: " + classifiedHand.name;
 
         console.log(htmlOutput);
-        response = { statusCode: 200, body: htmlOutput };
+        response = {
+                        statusCode: 200,
+                        headers: {
+                            'Content-Type': 'text/html',
+                        },
+                        body: htmlOutput
+                    };
     }
     catch (err)
     {
