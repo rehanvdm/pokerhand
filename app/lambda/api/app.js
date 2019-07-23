@@ -18,7 +18,7 @@ module.exports.handler = async (event, context) =>
 
         let hand = deck.GetCards(5);
 
-        htmlOutput += "Your hand: <br>";
+        htmlOutput += "Your hand: ";
         for (let card of hand)
             htmlOutput += card.ToCardNamePretty();
         htmlOutput += "<br>";
