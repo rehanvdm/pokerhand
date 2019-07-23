@@ -1,0 +1,29 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 8
+  pre_build:
+    commands:
+      # Install AWS SAM
+      - pip install aws-sam-cli
+      # Install npm for Individual Lambdas
+      - cd app/lambda/api
+      - npm install
+      - npm prune --production
+      - cd ../../../
+      # Install npm for Project
+      - npm install
+  build:
+    commands:
+        # Run tests
+        - npm test
+        - npm prune --production
+  post_build:
+    commands:
+      # Create and upload a deployment package
+      - npm run sam_package
+artifacts:
+  files:
+    - app-packaged.yaml
+

@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: A AWS Lambda API returning a Poker hand(Five-card) an then the classification of the hand
+
+Parameters:
+  AppName:
+    Default: pokerhand
+    Type: String
+    Description: Name of app
+  AppEnvironment:
+    Default: prod
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+    Description: Environment of this stack
+
+
+
+Globals:
+  Function:
+    Timeout: 5
+    Environment:
+      Variables:
+        APPNAME: !Ref AppName
+        ENVIRONMENT: !Ref AppEnvironment
+    Tags:
+      APPNAME: !Ref AppName
+      ENVIRONMENT: !Ref AppEnvironment
+
+
+Resources:
+  ApiLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Join ['', [!Ref AppName, '-lambda-api-', !Ref AppEnvironment]]
+      Runtime: nodejs8.10
+      CodeUri: app/lambda/api/
+      Handler: app.handler
+      Timeout: 10
+      Environment:
+        Variables:
+          TIMEOUT: 10
+      Events:
+        AnyRequest:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref PokerHandApi
+
+  PokerHandApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Join ['', [!Ref AppName, '-api-', !Ref AppEnvironment]]
+      StageName: !Ref AppEnvironment
+
+
+Outputs:
+  PokerHandApi:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${PokerHandApi}.execute-api.${AWS::Region}.amazonaws.com/${AppEnvironment}/"
