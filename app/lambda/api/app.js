@@ -25,6 +25,12 @@ module.exports.handler = async (event, context) =>
         let classifiedHand = pokersolver.solve(hand.map( (card) => card.ToCardName() ), "standard"); /* Other games/classifiers can be specified here instead of standard like: threecard */
         htmlOutput += "<br> You hve: " + classifiedHand.name;
 
+        /* Extra step to transform non-unicode to HTML Entities */
+        htmlOutput = htmlOutput.replace(/♣/g, '&clubs;')
+                                .replace(/♦/g, '&diams;')
+                                .replace(/♥/g, '&hearts;')
+                                .replace(/♠/g, '&spades;');
+
         console.log(htmlOutput);
         response = {
                         statusCode: 200,
